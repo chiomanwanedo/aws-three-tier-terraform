@@ -7,7 +7,7 @@ resource "aws_lb" "alb" {
 
   enable_deletion_protection = false
 
-   tags = {
+  tags = {
     Name = "three-tier-alb"
   }
 }
@@ -15,14 +15,18 @@ resource "aws_lb" "alb" {
 
 
 resource "aws_lb_target_group" "alb_target_group" {
-  name     = "three-tier-lb-tg"
-  port     = 8080
-  protocol = "HTTP"
-  vpc_id   = aws_vpc.three_tier_vpc.id
+  name        = "three-tier-tg"
+  port        = 80
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.three_tier_vpc.id
   target_type = "ip"
 
-tags = {
+  tags = {
     Name = "three-tier-lb-target-group"
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
@@ -31,8 +35,8 @@ resource "aws_lb_listener" "alb_listener" {
   load_balancer_arn = aws_lb.alb.arn
   port              = "80"
   protocol          = "HTTP"
-  
-default_action {
+
+  default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.alb_target_group.arn
   }

@@ -4,6 +4,15 @@ import redis
 import os
 import json
 
+
+from decimal import Decimal
+
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            return str(obj)
+        return super().default(obj)
+
 app = Flask(__name__)
 
 
@@ -50,7 +59,7 @@ def get_products():
     products = [{"id": r[0], "name": r[1], "price": r[2], "stock": r[3]} for r in rows]
     
     # Store in Redis for 60 seconds
-    redis_client.setex(cache_key, 60, json.dumps(products))
+    redis_client.setex(cache_key, 60, json.dumps(products, cls=DecimalEncoder ))
     
     return jsonify({"source": "database", "data": products}), 200
 

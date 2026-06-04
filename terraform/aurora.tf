@@ -13,7 +13,6 @@ resource "aws_rds_cluster" "rds_aurora" {
   engine                  = "aurora-postgresql"
   engine_mode             = "provisioned"
   engine_version          = "15.17"
-  availability_zones      = ["eu-west-2a", "eu-west-2b"]
   database_name           = "threetierdb"
   master_username         = "threetieruser"
   master_password         = var.db_password

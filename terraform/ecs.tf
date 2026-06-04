@@ -4,9 +4,7 @@ resource "aws_ecs_cluster" "ecs_cluster" {
   tags = {
     Name = "three-tier-ecs-cluster"
   }
-
 }
-
 
 resource "aws_ecs_task_definition" "ecs_task_definition" {
   family                   = "three-tier-task"
@@ -19,10 +17,17 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
   container_definitions = jsonencode([
     {
       name      = "three-tier-app"
-      image     = "nginx:latest"
+      image     = "545586474482.dkr.ecr.eu-west-2.amazonaws.com/three-tier-repository:v2"
       cpu       = 256
       memory    = 512
       essential = true
+      environment = [
+        { name = "DB_HOST", value = tostring(aws_rds_cluster.rds_aurora.endpoint) },
+        { name = "DB_NAME", value = "threetierdb" },
+        { name = "DB_USER", value = "threetieruser" },
+        { name = "DB_PASSWORD", value = tostring(var.db_password) },
+        { name = "REDIS_HOST", value = tostring(aws_elasticache_cluster.elasticache_cluster.cache_nodes[0].address) }
+      ]
       portMappings = [
         {
           containerPort = 80
@@ -41,7 +46,6 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
   ])
 }
 
-
 resource "aws_ecs_service" "ecs_service" {
   name            = "three-tier-service"
   cluster         = aws_ecs_cluster.ecs_cluster.id
@@ -59,8 +63,6 @@ resource "aws_ecs_service" "ecs_service" {
     container_port   = 80
   }
 }
-
-
 
 resource "aws_cloudwatch_log_group" "ecs_log_group" {
   name              = "/ecs/three-tier-app"

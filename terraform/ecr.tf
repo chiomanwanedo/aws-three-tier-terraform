@@ -6,6 +6,8 @@ resource "aws_ecr_repository" "ecr_repository" {
     scan_on_push = true
   }
 
+  force_delete = true
+
   tags = {
     Name = "three-tier-image-repository"
   }

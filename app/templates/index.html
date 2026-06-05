@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products | DevOps by Chioma</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            background: #f0f2ff;
+            min-height: 100vh;
+            padding: 1.5rem;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 500;
+            color: #1a1f4e
+        }
+
+        .badge {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: #e0e4ff;
+            color: #534AB7;
+            border: 0.5px solid #AFA9EC
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.15s
+        }
+
+        .btn:hover {
+            opacity: 0.85
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #534AB7, #7F77DD);
+            color: #fff
+        }
+
+        .btn-danger {
+            background: #FAECE7;
+            color: #993C1D;
+            border: 0.5px solid #F0997B
+        }
+
+        .btn-danger:hover {
+            background: #F5C4B3
+        }
+
+        .btn-edit {
+            background: #E1F5EE;
+            color: #0F6E56;
+            border: 0.5px solid #5DCAA5
+        }
+
+        .btn-cancel {
+            background: #f0f2ff;
+            color: #534AB7;
+            border: 0.5px solid #d0d4f0
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 1.5rem
+        }
+
+        .stat {
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            color: #fff
+        }
+
+        .stat-0 {
+            background: linear-gradient(135deg, #534AB7, #7F77DD)
+        }
+
+        .stat-1 {
+            background: linear-gradient(135deg, #0F6E56, #1D9E75)
+        }
+
+        .stat-2 {
+            background: linear-gradient(135deg, #993C1D, #D85A30)
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-bottom: 6px
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 500
+        }
+
+        .table-wrap {
+            background: #fff;
+            border: 0.5px solid #d0d4f0;
+            border-radius: 12px;
+            overflow: hidden
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        thead tr {
+            background: #f5f6ff
+        }
+
+        th {
+            padding: 10px 14px;
+            text-align: left;
+            color: #7F77DD;
+            font-weight: 500;
+            font-size: 12px;
+            border-bottom: 0.5px solid #e0e4ff
+        }
+
+        td {
+            padding: 10px 14px;
+            color: #2a2d4a;
+            border-bottom: 0.5px solid #f0f2ff
+        }
+
+        tr:last-child td {
+            border-bottom: none
+        }
+
+        tr:hover td {
+            background: #fafaff
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500
+        }
+
+        .pill-high {
+            background: #E1F5EE;
+            color: #0F6E56;
+            border: 0.5px solid #9FE1CB
+        }
+
+        .pill-low {
+            background: #FAEEDA;
+            color: #854F0B;
+            border: 0.5px solid #FAC775
+        }
+
+        .pill-critical {
+            background: #FAECE7;
+            color: #993C1D;
+            border: 0.5px solid #F5C4B3
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(83, 74, 183, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100
+        }
+
+        .modal {
+            background: #fff;
+            border: 0.5px solid #d0d4f0;
+            border-radius: 14px;
+            padding: 1.5rem;
+            width: 360px;
+            max-width: 95vw
+        }
+
+        .modal h2 {
+            font-size: 16px;
+            font-weight: 500;
+            color: #1a1f4e;
+            margin-bottom: 1rem
+        }
+
+        .form-group {
+            margin-bottom: 12px
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: #7F77DD;
+            margin-bottom: 5px;
+            font-weight: 500
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px 10px;
+            background: #f5f6ff;
+            border: 0.5px solid #d0d4f0;
+            border-radius: 7px;
+            color: #1a1f4e;
+            font-size: 13px;
+            outline: none
+        }
+
+        .form-group input:focus {
+            border-color: #7F77DD;
+            background: #fff
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-top: 1rem
+        }
+
+        .empty {
+            text-align: center;
+            padding: 3rem;
+            color: #AFA9EC;
+            font-size: 14px
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            background: #534AB7;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 13px;
+            color: #fff;
+            z-index: 200;
+            animation: fadeIn 0.2s ease
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #AFA9EC;
+            font-size: 13px
+        }
+
+        .id-badge {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #EEEDFE;
+            color: #534AB7;
+            font-size: 11px;
+            font-weight: 500;
+            text-align: center;
+            line-height: 22px
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <div style="display:flex;align-items:center;gap:10px">
+            <h1>Products</h1>
+            <span class="badge" id="source-badge">loading...</span>
+        </div>
+        <button class="btn btn-primary" onclick="openAdd()"><i class="ti ti-plus"></i> Add product</button>
+    </div>
+
+    <div class="stats">
+        <div class="stat stat-0">
+            <div class="stat-label">Total products</div>
+            <div class="stat-value" id="stat-count">—</div>
+        </div>
+        <div class="stat stat-1">
+            <div class="stat-label">Total stock</div>
+            <div class="stat-value" id="stat-stock">—</div>
+        </div>
+        <div class="stat stat-2">
+            <div class="stat-label">Avg price</div>
+            <div class="stat-value" id="stat-avg">—</div>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="tbody">
+                <tr>
+                    <td colspan="6" class="loading"><i class="ti ti-refresh"></i> Loading products...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="modal" class="modal-overlay" style="display:none">
+        <div class="modal">
+            <h2 id="modal-title">Add product</h2>
+            <div class="form-group"><label>Name</label><input id="f-name" type="text"
+                    placeholder="e.g. Nike Air Force 1"></div>
+            <div class="form-group"><label>Price (£)</label><input id="f-price" type="number" step="0.01"
+                    placeholder="0.00"></div>
+            <div class="form-group"><label>Stock</label><input id="f-stock" type="number" placeholder="0"></div>
+            <div class="modal-actions">
+                <button class="btn btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" id="modal-save" onclick="saveProduct()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+let products = [];
+let editingId = null;
+
+async function loadProducts() {
+  try {
+    const res = await fetch('/products');
+    const data = await res.json();
+    products = data.data || [];
+    const src = data.source || 'unknown';
+    document.getElementById('source-badge').textContent = src === 'cache' ? '⚡ Redis cache' : '🗄 Aurora DB';
+    renderTable();
+    renderStats();
+  } catch(e) {
+    document.getElementById('tbody').innerHTML = '<tr><td colspan="6" class="empty">Could not connect to API</td></tr>';
+  }
+}
+
+function stockPill(n) {
+  n = parseInt(n);
+  if(n > 100) return `<span class="pill pill-high">${n} in stock</span>`;
+  if(n > 20) return `<span class="pill pill-low">${n} in stock</span>`;
+  return `<span class="pill pill-critical">${n} in stock</span>`;
+}
+
+function renderTable() {
+  const tb = document.getElementById('tbody');
+  if(!products.length) { tb.innerHTML = '<tr><td colspan="6" class="empty">No products found</td></tr>'; return; }
+  tb.innerHTML = products.map(p => `
+    <tr>
+      <td><span class="id-badge">${p.id}</span></td>
+      <td style="font-weight:500;color:#1a1f4e">${p.name}</td>
+      <td style="color:#534AB7;font-weight:500">£${parseFloat(p.price).toFixed(2)}</td>
+      <td>${stockPill(p.stock)}</td>
+      <td></td>
+      <td style="text-align:right;white-space:nowrap">
+        <button class="btn btn-sm btn-edit" onclick="openEdit(${p.id})"><i class="ti ti-edit"></i></button>
+        <button class="btn btn-sm btn-danger" onclick="deleteProduct(${p.id})" style="margin-left:4px"><i class="ti ti-trash"></i></button>
+      </td>
+    </tr>`).join('');
+}
+
+function renderStats() {
+  document.getElementById('stat-count').textContent = products.length;
+  const totalStock = products.reduce((s,p) => s + parseInt(p.stock), 0);
+  const avgPrice = products.length ? (products.reduce((s,p) => s + parseFloat(p.price), 0) / products.length) : 0;
+  document.getElementById('stat-stock').textContent = totalStock.toLocaleString();
+  document.getElementById('stat-avg').textContent = '£' + avgPrice.toFixed(2);
+}
+
+function openAdd() {
+  editingId = null;
+  document.getElementById('modal-title').textContent = 'Add product';
+  document.getElementById('modal-save').textContent = 'Add';
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-price').value = '';
+  document.getElementById('f-stock').value = '';
+  document.getElementById('modal').style.display = 'flex';
+}
+
+function openEdit(id) {
+  const p = products.find(x => x.id === id);
+  if(!p) return;
+  editingId = id;
+  document.getElementById('modal-title').textContent = 'Edit product';
+  document.getElementById('modal-save').textContent = 'Save changes';
+  document.getElementById('f-name').value = p.name;
+  document.getElementById('f-price').value = parseFloat(p.price).toFixed(2);
+  document.getElementById('f-stock').value = p.stock;
+  document.getElementById('modal').style.display = 'flex';
+}
+
+function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
+async function saveProduct() {
+  const name = document.getElementById('f-name').value.trim();
+  const price = parseFloat(document.getElementById('f-price').value);
+  const stock = parseInt(document.getElementById('f-stock').value);
+  if(!name || isNaN(price) || isNaN(stock)) { showToast('Please fill in all fields'); return; }
+  try {
+    if(editingId) {
+      await fetch(`/products/${editingId}`, {method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,price,stock})});
+      showToast('Product updated');
+    } else {
+      await fetch('/products', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,price,stock})});
+      showToast('Product added');
+    }
+    closeModal();
+    loadProducts();
+  } catch(e) { showToast('Error saving product'); }
+}
+
+async function deleteProduct(id) {
+  const p = products.find(x => x.id === id);
+  if(!confirm(`Delete "${p?.name}"?`)) return;
+  try {
+    await fetch(`/products/${id}`, {method:'DELETE'});
+    showToast('Product deleted');
+    loadProducts();
+  } catch(e) { showToast('Error deleting product'); }
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+
+loadProducts();
+    </script>
+</body>
+
+</html>

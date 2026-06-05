@@ -17,7 +17,7 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
   container_definitions = jsonencode([
     {
       name      = "three-tier-app"
-      image     = "545586474482.dkr.ecr.eu-west-2.amazonaws.com/three-tier-repository:v2"
+      image     = "545586474482.dkr.ecr.eu-west-2.amazonaws.com/three-tier-repository:v4"
       cpu       = 256
       memory    = 512
       essential = true

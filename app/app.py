@@ -1,8 +1,9 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 import psycopg2
 import redis
 import os
 import json
+
 
 
 from decimal import Decimal
@@ -37,6 +38,11 @@ def get_db_connection():
 @app.route('/health')
 def health():
     return jsonify({"status": "ok"}), 200   
+
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 
 @app.route('/products')

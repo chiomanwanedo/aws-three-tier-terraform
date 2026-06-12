@@ -17,16 +17,19 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
   container_definitions = jsonencode([
     {
       name      = "three-tier-app"
-      image     = "545586474482.dkr.ecr.eu-west-2.amazonaws.com/three-tier-repository:v4"
+      image     = "545586474482.dkr.ecr.eu-west-2.amazonaws.com/three-tier-repository:v1"
       cpu       = 256
       memory    = 512
       essential = true
       environment = [
         { name = "DB_HOST", value = tostring(aws_rds_cluster.rds_aurora.endpoint) },
-        { name = "DB_NAME", value = "threetierdb" },
-        { name = "DB_USER", value = "threetieruser" },
-        { name = "DB_PASSWORD", value = tostring(var.db_password) },
         { name = "REDIS_HOST", value = tostring(aws_elasticache_cluster.elasticache_cluster.cache_nodes[0].address) }
+      ]
+
+      secrets = [
+        { name = "DB_NAME", valueFrom = "${aws_secretsmanager_secret.secret_manager_secret.arn}:dbname::" },
+        { name = "DB_USER", valueFrom = "${aws_secretsmanager_secret.secret_manager_secret.arn}:username::" },
+        { name = "DB_PASSWORD", valueFrom = "${aws_secretsmanager_secret.secret_manager_secret.arn}:password::" }
       ]
       portMappings = [
         {

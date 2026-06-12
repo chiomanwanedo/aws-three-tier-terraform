@@ -10,3 +10,14 @@ variable "db_password" {
   sensitive   = true
 }
 
+
+variable "db_username" {
+  description = "Database username"
+  type        = string
+}
+
+
+variable "db_name" {
+  description = "Database name"
+  type        = string
+}

@@ -101,6 +101,19 @@ data "aws_iam_policy_document" "grafana_cloudwatch_permissions" {
     ]
     resources = ["*"]
   }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "logs:DescribeLogGroups",
+      "logs:GetLogGroupFields",
+      "logs:StartQuery",
+      "logs:StopQuery",
+      "logs:GetQueryResults",
+      "logs:GetLogEvents",
+    ]
+    resources = ["*"]
+  }
 }
 
 

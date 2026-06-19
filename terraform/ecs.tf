@@ -13,6 +13,7 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
   cpu                      = "256"
   memory                   = "512"
   execution_role_arn       = aws_iam_role.ecs_execution_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_role.arn
 
   container_definitions = jsonencode([
     {
@@ -50,11 +51,13 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
 }
 
 resource "aws_ecs_service" "ecs_service" {
-  name            = "three-tier-service"
-  cluster         = aws_ecs_cluster.ecs_cluster.id
-  launch_type     = "FARGATE"
-  task_definition = aws_ecs_task_definition.ecs_task_definition.id
-  desired_count   = 2
+  name                   = "three-tier-service"
+  cluster                = aws_ecs_cluster.ecs_cluster.id
+  launch_type            = "FARGATE"
+  task_definition        = aws_ecs_task_definition.ecs_task_definition.id
+  desired_count          = 2
+  enable_execute_command = true
+
   network_configuration {
     subnets          = [aws_subnet.private_app_subnet_1.id, aws_subnet.private_app_subnet_2.id]
     security_groups  = [aws_security_group.ecs_security_group.id]

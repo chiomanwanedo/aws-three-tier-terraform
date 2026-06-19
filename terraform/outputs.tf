@@ -33,3 +33,8 @@ output "redis_endpoint" {
 output "ecr" {
   value = aws_ecr_repository.ecr_repository.repository_url
 }
+
+
+output "grafana_cloudwatch_arn" {
+  value = aws_iam_role.grafana_cloudwatch_role.arn
+}

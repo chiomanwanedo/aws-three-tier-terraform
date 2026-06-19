@@ -3,6 +3,13 @@ resource "aws_sns_topic" "three_tier_topic" {
 }
 
 
+resource "aws_sns_topic_subscription" "three_tier_sns_subscription" {
+  topic_arn = aws_sns_topic.three_tier_topic.arn
+  protocol  = "email"
+  endpoint  = "chiomavanessa8@gmail.com"
+}
+
+
 resource "aws_cloudwatch_metric_alarm" "ecs_cpu_high" {
   alarm_name          = "three-tier-alarm"
   comparison_operator = "GreaterThanOrEqualToThreshold"

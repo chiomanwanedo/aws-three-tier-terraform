@@ -37,8 +37,29 @@ def get_db_connection():
 
 @app.route('/health')
 def health():
-    return jsonify({"status": "ok"}), 200   
-
+    status = {"status": "ok", "database": "ok", "cache": "ok"}
+    
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT 1")
+        cur.close()
+        conn.close()
+    except Exception as e:
+        status["database"] = "error"
+        status["status"] = "degraded"
+    
+    try:
+        redis_client.ping()
+    except Exception as e:
+        status["cache"] = "error"
+        status["status"] = "degraded"
+    
+    if status["status"] == "ok":
+        return jsonify(status), 200
+    else:
+        return jsonify(status), 503
+    
 
 @app.route('/')
 def index():

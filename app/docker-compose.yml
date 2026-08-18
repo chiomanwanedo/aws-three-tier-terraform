@@ -1,0 +1,27 @@
+services:
+  postgresql:
+    image: postgres
+    environment:
+     - POSTGRES_DB=threetierdb
+     - POSTGRES_USER=threetieruser
+     - POSTGRES_PASSWORD=localtestpass123
+    ports:
+      - "5432:5432"
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+  app:
+    build: .
+    depends_on:
+      - postgresql
+      - redis
+    ports:
+      - "80:80"
+    environment:
+     - DB_HOST=postgresql
+     - DB_HOST_READER=postgresql
+     - DB_NAME=threetierdb
+     - DB_USER=threetieruser
+     - DB_PASSWORD=localtestpass123
+     - REDIS_HOST=redis

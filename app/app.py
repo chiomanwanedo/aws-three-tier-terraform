@@ -3,6 +3,7 @@ import psycopg2
 import redis
 import os
 import json
+import threading
 
 
 
@@ -16,12 +17,16 @@ class DecimalEncoder(json.JSONEncoder):
 
 app = Flask(__name__)
 
+def delayed_delete():
+    redis_client.delete("products") 
 
 # Redis connection
 redis_client = redis.Redis(
     host=os.environ.get('REDIS_HOST'),
     port=6379,
-    decode_responses=True
+    decode_responses=True,
+    socket_connect_timeout=2
+
 )
 
 # Aurora connection
@@ -30,14 +35,26 @@ def get_db_connection():
         host=os.environ.get('DB_HOST'),
         database=os.environ.get('DB_NAME'),
         user=os.environ.get('DB_USER'),
-        password=os.environ.get('DB_PASSWORD')
+        password=os.environ.get('DB_PASSWORD'),
+        connect_timeout=2
     )
     return conn
+
+def get_db_connection_reader():
+    conn = psycopg2.connect(
+        host=os.environ.get('DB_HOST_READER'),
+        database=os.environ.get('DB_NAME'),
+        user=os.environ.get('DB_USER'),
+        password=os.environ.get('DB_PASSWORD'),
+	connect_timeout=2
+    )
+    return conn
+ 
 
 
 @app.route('/health')
 def health():
-    status = {"status": "ok", "database": "ok", "cache": "ok"}
+    status = {"status": "ok", "database_writer": "ok", "database_reader": "ok", "cache": "ok"}
     
     try:
         conn = get_db_connection()
@@ -46,8 +63,18 @@ def health():
         cur.close()
         conn.close()
     except Exception as e:
-        status["database"] = "error"
-        status["status"] = "degraded"
+        status["database_writer"] = "unreachable"
+        status["status"] = "unreachable"
+    
+    try:
+        conn = get_db_connection_reader()
+        cur = conn.cursor()
+        cur.execute("SELECT 1")
+        cur.close()
+        conn.close()
+    except Exception as e:
+        status["database_reader"] = "unreachable"
+        status["status"] = "unreachable"
     
     try:
         redis_client.ping()
@@ -59,7 +86,6 @@ def health():
         return jsonify(status), 200
     else:
         return jsonify(status), 503
-    
 
 @app.route('/')
 def index():
@@ -76,7 +102,7 @@ def get_products():
         return jsonify({"source": "cache", "data": json.loads(cached_data)}), 200
     
     # Cache miss — query Aurora
-    conn = get_db_connection()
+    conn = get_db_connection_reader()
     cur = conn.cursor()
     cur.execute("SELECT id, name, price, stock FROM products")
     rows = cur.fetchall()
@@ -108,6 +134,7 @@ def add_product():
     
     # Invalidate cache
     redis_client.delete("products")
+    threading.Timer(0.5, delayed_delete).start()
     
     return jsonify({"message": "Product added", "id": product_id}), 201
 
@@ -128,6 +155,7 @@ def update_product(product_id):
     
     # Invalidate cache
     redis_client.delete("products")
+    threading.Timer(0.5, delayed_delete).start()
     
     return jsonify({"message": "Product updated"}), 200
 
@@ -143,9 +171,11 @@ def delete_product(product_id):
     
     # Invalidate cache
     redis_client.delete("products")
-    
+    threading.Timer(0.5, delayed_delete).start()
     return jsonify({"message": "Product deleted"}), 200
 
+ 
+    
 
 def init_db():
     conn = get_db_connection()

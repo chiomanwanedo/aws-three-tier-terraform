@@ -6,26 +6,11 @@ resource "aws_ecs_cluster" "ecs_cluster" {
   }
 }
 
-resource "aws_ecs_task_definition" "ecs_task_definition" {
-  family                   = "three-tier-task"
-  network_mode             = "awsvpc"
-  requires_compatibilities = ["FARGATE"]
-  cpu                      = "256"
-  memory                   = "512"
-  execution_role_arn       = aws_iam_role.ecs_execution_role.arn
-  task_role_arn            = aws_iam_role.ecs_task_role.arn
+container_definitions = jsonencode([...])
 
-  container_definitions = jsonencode([
-    {
-      name      = "three-tier-app"
-      image     = "545586474482.dkr.ecr.eu-west-2.amazonaws.com/three-tier-repository:latest"
-      cpu       = 256
-      memory    = 512
-      essential = true
-      environment = [
-        { name = "DB_HOST", value = tostring(aws_rds_cluster.rds_aurora.endpoint) },
-        { name = "REDIS_HOST", value = tostring(aws_elasticache_cluster.elasticache_cluster.cache_nodes[0].address) }
-      ]
+  lifecycle {
+    ignore_changes = [container_definitions]
+  }
 
       secrets = [
         { name = "DB_NAME", valueFrom = "${aws_secretsmanager_secret.secret_manager_secret.arn}:dbname::" },
@@ -46,9 +31,9 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
           "awslogs-stream-prefix" = "ecs"
         }
       }
-    }
-  ])
-}
+    
+  
+
 
 resource "aws_ecs_service" "ecs_service" {
   name                   = "three-tier-service"
@@ -68,7 +53,12 @@ resource "aws_ecs_service" "ecs_service" {
     container_name   = "three-tier-app"
     container_port   = 80
   }
+  lifecycle {
+    ignore_changes = [task_definition]
+  }
 }
+
+
 
 resource "aws_cloudwatch_log_group" "ecs_log_group" {
   name              = "/ecs/three-tier-app"

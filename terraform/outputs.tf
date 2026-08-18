@@ -26,6 +26,11 @@ output "aurora_endpoint" {
   value = aws_rds_cluster.rds_aurora.endpoint
 }
 
+output "aurora_reader_endpoint" {
+  value = aws_rds_cluster.rds_aurora.reader_endpoint
+}
+
+
 output "redis_endpoint" {
   value = aws_elasticache_cluster.elasticache_cluster.cache_nodes[0].address
 }

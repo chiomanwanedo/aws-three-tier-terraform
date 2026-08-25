@@ -27,9 +27,21 @@ resource "aws_iam_role_policy_attachment" "ecs_execution_role" {
 }
 
 
-resource "aws_iam_role_policy_attachment" "secrets_execution_role" {
-  role       = aws_iam_role.ecs_execution_role.name
-  policy_arn = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
+# Scoped-down secret access: the execution role can ONLY read the app_user
+# secret's value. It has no access to the master credential's secret.
+
+data "aws_iam_policy_document" "app_user_secret_access" {
+  statement {
+    effect    = "Allow"
+    actions   = ["secretsmanager:GetSecretValue"]
+    resources = [aws_secretsmanager_secret.app_user_secret.arn]
+  }
+}
+
+resource "aws_iam_role_policy" "app_user_secret_policy" {
+  name   = "app-user-secret-read-only"
+  role   = aws_iam_role.ecs_execution_role.id
+  policy = data.aws_iam_policy_document.app_user_secret_access.json
 }
 
 

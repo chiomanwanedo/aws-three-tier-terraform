@@ -6,16 +6,31 @@ resource "aws_ecs_cluster" "ecs_cluster" {
   }
 }
 
-container_definitions = jsonencode([...])
+resource "aws_ecs_task_definition" "ecs_task_definition" {
+  family                   = "three-tier-task"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  cpu                      = "256"
+  memory                   = "512"
+  execution_role_arn       = aws_iam_role.ecs_execution_role.arn
+  task_role_arn             = aws_iam_role.ecs_task_role.arn
 
-  lifecycle {
-    ignore_changes = [container_definitions]
-  }
-
+  container_definitions = jsonencode([
+    {
+      name      = "three-tier-app"
+      image     = "545586474482.dkr.ecr.eu-west-2.amazonaws.com/three-tier-repository:latest"
+      cpu       = 256
+      memory    = 512
+      essential = true
+      environment = [
+        { name = "DB_HOST", value = tostring(aws_rds_cluster.rds_aurora.endpoint) },
+        { name = "DB_HOST_READER", value = tostring(aws_rds_cluster.rds_aurora.reader_endpoint) },
+        { name = "REDIS_HOST", value = tostring(aws_elasticache_cluster.elasticache_cluster.cache_nodes[0].address) }
+      ]
       secrets = [
         { name = "DB_NAME", valueFrom = "${aws_secretsmanager_secret.secret_manager_secret.arn}:dbname::" },
-        { name = "DB_USER", valueFrom = "${aws_secretsmanager_secret.secret_manager_secret.arn}:username::" },
-        { name = "DB_PASSWORD", valueFrom = "${aws_secretsmanager_secret.secret_manager_secret.arn}:password::" }
+        { name = "DB_USER", valueFrom = "${aws_secretsmanager_secret.app_user_secret.arn}:username::" },
+        { name = "DB_PASSWORD", valueFrom = "${aws_secretsmanager_secret.app_user_secret.arn}:password::" }
       ]
       portMappings = [
         {
@@ -31,8 +46,13 @@ container_definitions = jsonencode([...])
           "awslogs-stream-prefix" = "ecs"
         }
       }
-    
-  
+    }
+  ])
+
+  lifecycle {
+    ignore_changes = [container_definitions]
+  }
+}
 
 
 resource "aws_ecs_service" "ecs_service" {

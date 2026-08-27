@@ -37,3 +37,30 @@ resource "aws_secretsmanager_secret_version" "app_user_secret_version" {
     dbname   = var.db_name
   })
 }
+
+
+# --- Secrets for AI incident-triage Lambda ---
+
+resource "aws_secretsmanager_secret" "claude_api_key_secret" {
+  name                    = "three-tier-claude-api-key"
+  recovery_window_in_days = 0
+}
+
+resource "aws_secretsmanager_secret_version" "claude_api_key_secret_version" {
+  secret_id = aws_secretsmanager_secret.claude_api_key_secret.id
+  secret_string = jsonencode({
+    api_key = var.claude_api_key
+  })
+}
+
+resource "aws_secretsmanager_secret" "slack_webhook_secret" {
+  name                    = "three-tier-slack-webhook"
+  recovery_window_in_days = 0
+}
+
+resource "aws_secretsmanager_secret_version" "slack_webhook_secret_version" {
+  secret_id = aws_secretsmanager_secret.slack_webhook_secret.id
+  secret_string = jsonencode({
+    webhook_url = var.slack_webhook_url
+  })
+}

@@ -17,7 +17,21 @@ variable "db_username" {
 }
 
 
+
 variable "db_name" {
   description = "Database name"
   type        = string
+}
+
+
+variable "slack_webhook_url" {
+  description = "Slack webhook URL for incident notifications"
+  type        = string
+  sensitive   = true
+}
+
+variable "claude_api_key" {
+  description = "Anthropic Claude API key"
+  type        = string
+  sensitive   = true
 }

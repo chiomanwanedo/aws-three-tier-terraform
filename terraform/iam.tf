@@ -66,3 +66,46 @@ resource "aws_iam_role_policy_attachment" "ecs_exec_policy" {
   role       = aws_iam_role.ecs_task_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
+
+
+# --- Lambda IAM setup for AI incident-triage function ---
+
+data "aws_iam_policy_document" "lambda_task_role_trust" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "lambda_task_role" {
+  name               = "three-tier-lambda-task-role"
+  assume_role_policy = data.aws_iam_policy_document.lambda_task_role_trust.json
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_exec_policy" {
+  role       = aws_iam_role.lambda_task_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSLambdaBasicExecutionRole"
+}
+
+data "aws_iam_policy_document" "lambda_secrets_access" {
+  statement {
+    effect    = "Allow"
+    actions   = ["secretsmanager:GetSecretValue"]
+    resources = [aws_secretsmanager_secret.claude_api_key_secret.arn]
+  }
+  statement {
+    effect    = "Allow"
+    actions   = ["secretsmanager:GetSecretValue"]
+    resources = [aws_secretsmanager_secret.slack_webhook_secret.arn]
+  }
+}
+
+resource "aws_iam_role_policy" "lambda_secret_policy" {
+  name   = "lambda-secret-read-only"
+  role   = aws_iam_role.lambda_task_role.id
+  policy = data.aws_iam_policy_document.lambda_secrets_access.json
+}

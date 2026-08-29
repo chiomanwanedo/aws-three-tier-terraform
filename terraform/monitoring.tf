@@ -10,6 +10,13 @@ resource "aws_sns_topic_subscription" "three_tier_sns_subscription" {
 }
 
 
+resource "aws_sns_topic_subscription" "lambda_sns_subscription" {
+  topic_arn = aws_sns_topic.three_tier_topic.arn
+  protocol  = "lambda"
+  endpoint  = aws_lambda_function.ai_triage_lambda.arn
+}
+
+
 resource "aws_cloudwatch_metric_alarm" "ecs_cpu_high" {
   alarm_name          = "three-tier-alarm"
   comparison_operator = "GreaterThanOrEqualToThreshold"

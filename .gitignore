@@ -44,3 +44,7 @@ terraform.rc
 # planout
 
 *.tfvars
+
+terraform/lambda/*
+!terraform/lambda/lambda_function.py
+terraform/lambda_function.zip

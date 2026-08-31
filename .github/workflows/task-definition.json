@@ -14,7 +14,49 @@
             "image": "545586474482.dkr.ecr.eu-west-2.amazonaws.com/three-tier-repository:latest",
             "cpu": 256,
             "memory": 512,
-            "essential": true
+            "essential": true,
+            "environment": [
+                {
+                    "name": "DB_HOST",
+                    "value": "three-tier-aurora-cluster.cluster-c1wgioi2o7kb.eu-west-2.rds.amazonaws.com"
+                },
+                {
+                    "name": "DB_HOST_READER",
+                    "value": "three-tier-aurora-cluster.cluster-ro-c1wgioi2o7kb.eu-west-2.rds.amazonaws.com"
+                },
+                {
+                    "name": "REDIS_HOST",
+                    "value": "three-tier-redis-cluster.dikxkp.0001.euw2.cache.amazonaws.com"
+                }
+            ],
+            "secrets": [
+                {
+                    "name": "DB_NAME",
+                    "valueFrom": "arn:aws:secretsmanager:eu-west-2:545586474482:secret:three-tier-secret-manager-8RPtGZ:dbname::"
+                },
+                {
+                    "name": "DB_USER",
+                    "valueFrom": "arn:aws:secretsmanager:eu-west-2:545586474482:secret:three-tier-app-user-secret-GsRqtN:username::"
+                },
+                {
+                    "name": "DB_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:eu-west-2:545586474482:secret:three-tier-app-user-secret-GsRqtN:password::"
+                }
+            ],
+            "portMappings": [
+                {
+                    "containerPort": 80,
+                    "hostPort": 80
+                }
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/three-tier-app",
+                    "awslogs-region": "eu-west-2",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            }
         }
     ]
 }

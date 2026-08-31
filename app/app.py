@@ -174,43 +174,6 @@ def delete_product(product_id):
     threading.Timer(0.5, delayed_delete).start()
     return jsonify({"message": "Product deleted"}), 200
 
- 
-    
-
-def init_db():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS products (
-            id SERIAL PRIMARY KEY,
-            name VARCHAR(100),
-            price DECIMAL(10,2),
-            stock INTEGER
-        )
-    """)
-    
-    cur.execute("SELECT COUNT(*) FROM products")
-    count = cur.fetchone()[0]
-    
-    if count == 0:
-        products = [
-            ("Nike Air Max", 89.99, 150),
-            ("Adidas Samba", 74.99, 75),
-            ("New Balance 574", 69.99, 200),
-            ("Puma RS-X", 64.99, 100),
-            ("Vans Old Skool", 59.99, 180)
-        ]
-        cur.executemany(
-            "INSERT INTO products (name, price, stock) VALUES (%s, %s, %s)",
-            products
-        )
-    
-    conn.commit()
-    cur.close()
-    conn.close()
-
 
 if __name__ == '__main__':
-    init_db()
     app.run(host='0.0.0.0', port=80)

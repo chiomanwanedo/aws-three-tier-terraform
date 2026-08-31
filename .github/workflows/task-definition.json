@@ -1,0 +1,20 @@
+{
+    "family": "three-tier-task",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "256",
+    "memory": "512",
+    "executionRoleArn": "arn:aws:iam::545586474482:role/three-tier-ecs-execution-role",
+    "taskRoleArn": "arn:aws:iam::545586474482:role/three-tier-ecs-task-role",
+    "containerDefinitions": [
+        {
+            "name": "three-tier-app",
+            "image": "545586474482.dkr.ecr.eu-west-2.amazonaws.com/three-tier-repository:latest",
+            "cpu": 256,
+            "memory": 512,
+            "essential": true
+        }
+    ]
+}

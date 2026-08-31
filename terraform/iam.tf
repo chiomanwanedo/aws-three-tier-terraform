@@ -34,7 +34,9 @@ data "aws_iam_policy_document" "app_user_secret_access" {
   statement {
     effect    = "Allow"
     actions   = ["secretsmanager:GetSecretValue"]
-    resources = [aws_secretsmanager_secret.app_user_secret.arn]
+    resources = [aws_secretsmanager_secret.app_user_secret.arn,
+                 aws_secretsmanager_secret.secret_manager_secret.arn
+    ]
   }
 }
 
@@ -88,7 +90,7 @@ resource "aws_iam_role" "lambda_task_role" {
 
 resource "aws_iam_role_policy_attachment" "lambda_exec_policy" {
   role       = aws_iam_role.lambda_task_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AWSLambdaBasicExecutionRole"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
 data "aws_iam_policy_document" "lambda_secrets_access" {

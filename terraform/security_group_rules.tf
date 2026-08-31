@@ -112,3 +112,4 @@ resource "aws_security_group_rule" "aurora_egress_ecs" {
   security_group_id        = aws_security_group.aurora_security_group.id
   source_security_group_id = aws_security_group.ecs_security_group.id
 }
+

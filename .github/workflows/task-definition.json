@@ -29,20 +29,20 @@
                     "value": "three-tier-redis-cluster.dikxkp.0001.euw2.cache.amazonaws.com"
                 }
             ],
-            "secrets": [
-                {
-                    "name": "DB_NAME",
-                    "valueFrom": "arn:aws:secretsmanager:eu-west-2:545586474482:secret:three-tier-secret-manager-8RPtGZ:dbname::"
-                },
-                {
-                    "name": "DB_USER",
-                    "valueFrom": "arn:aws:secretsmanager:eu-west-2:545586474482:secret:three-tier-app-user-secret-GsRqtN:username::"
-                },
-                {
-                    "name": "DB_PASSWORD",
-                    "valueFrom": "arn:aws:secretsmanager:eu-west-2:545586474482:secret:three-tier-app-user-secret-GsRqtN:password::"
-                }
-            ],
+           "secrets": [
+            {
+                "name": "DB_NAME",
+                "valueFrom": "arn:aws:secretsmanager:eu-west-2:545586474482:secret:three-tier-secret-manager-WuDydG:dbname::"
+            },
+            {
+                "name": "DB_USER",
+                "valueFrom": "arn:aws:secretsmanager:eu-west-2:545586474482:secret:three-tier-app-user-secret-GsRqtN:username::"
+            },
+            {
+                "name": "DB_PASSWORD",
+                "valueFrom": "arn:aws:secretsmanager:eu-west-2:545586474482:secret:three-tier-app-user-secret-GsRqtN:password::"
+            }
+        ],
             "portMappings": [
                 {
                     "containerPort": 80,

@@ -9,6 +9,7 @@ resource "aws_lambda_function" "ai_triage_lambda" {
   role             = aws_iam_role.lambda_task_role.arn
   handler          = "lambda_function.lambda_handler"
   runtime          = "python3.12"
+  timeout = 30
   filename         = data.archive_file.lambda_zip.output_path
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
 

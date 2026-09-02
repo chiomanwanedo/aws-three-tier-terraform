@@ -36,11 +36,11 @@
             },
             {
                 "name": "DB_USER",
-                "valueFrom": "arn:aws:secretsmanager:eu-west-2:545586474482:secret:three-tier-app-user-secret-GsRqtN:username::"
+                "valueFrom": "arn:aws:secretsmanager:eu-west-2:545586474482:secret:three-tier-app-user-secret-ybLPSu:username::"
             },
             {
                 "name": "DB_PASSWORD",
-                "valueFrom": "arn:aws:secretsmanager:eu-west-2:545586474482:secret:three-tier-app-user-secret-GsRqtN:password::"
+                "valueFrom": "arn:aws:secretsmanager:eu-west-2:545586474482:secret:three-tier-app-user-secret-ybLPSu:password::"
             }
         ],
             "portMappings": [
